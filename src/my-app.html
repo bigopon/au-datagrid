@@ -1,0 +1,11 @@
+<import from="./datagrid/datagrid"></import>
+
+<div style="display: flex">
+  <datagrid
+    :columns="state.columns"
+    :data="state.data"
+    :selected=state.selected
+    style="flex: 1"></datagrid>
+</div>
+<div>Selection Count
+  ${state.selected.length}</div>

@@ -1,0 +1,40 @@
+<import from='./datagrid.css'></import>
+<import from='./sort-indicator'></import>
+<import from='./sizing'></import>
+<import from='./cell'></import>
+
+<template class="dg-wrapper" :size="state.size">
+  <table
+    ref='table'
+    class='dg'
+    :class='selected && "dg-selectable"'>
+    <tbody>
+      <tr repeat.for='item of state.items'
+          class='dg-row'
+          :class="selected.includes(item) && 'dg-selected'">
+        <td repeat.for='c of state.columns'
+            as-element='cell'
+            class='dg-cell'
+            :class='c.css'
+            :html='c.render'>
+        </td>
+      </tr>
+    </tbody>
+    <!-- HACK: thead at the end is ugly, but required to have sticky headers on top of tr that 
+                have their own stacking context, e.g. when using opacity or transform. -->
+    <thead>
+      <tr>
+        <th repeat.for='c of state.columns'
+            class='dg-header'
+            :class='[c.css, c.sortable !== false && "dg-sort"]'
+            :style='{ width: c.width + "px" }'
+            @click='state.sortOn(c, $event.ctrlKey)'>
+            <cell :html='c.header' ></cell>
+            <sort-indicator :state='state' :column='c' ></sort-indicator>
+            <col-resizer :column='c'></col-resizer>
+        </th>
+      </tr>
+      <tr :if='loading' class='dg-loader'></tr>
+    </thead>
+  </table>
+</template>

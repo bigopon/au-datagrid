@@ -1,0 +1,133 @@
+.dg-wrapper {
+  border: 1px solid #bdc3c7;
+  position: relative; 
+  overflow: hidden
+}
+
+.dg-scroller {
+  overflow: auto scroll;
+  height: 100%
+}
+
+.dg {  
+  border-spacing: 0;
+  table-layout: fixed;
+  empty-cells: show;  
+}
+
+.dg-header, .dg-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.dg-header {
+  padding: 4px 12px;
+  background: #f5f7f7;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 600;  
+  border-bottom: solid 1px #bdc3c7;
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  text-align: left;
+  user-select: none;
+}
+
+.dg-header-dragged {
+  z-index: 2;
+  background: #cbeafa !important;
+}
+
+.dg-header-back {
+  position: absolute; 
+  z-index: 0;
+  background: #e2e1df;
+}
+
+.dg-sort {
+  cursor: pointer;
+}
+
+.dg-sort:hover {
+  background: #e0f4ff;
+}
+
+.dg-sort:active {
+  background: #cbeafa;
+}
+
+.dg-resizer, .dg-separator {
+  position: absolute;
+  right: 0;
+  top: 5px;
+  height: calc(100% - 10px);
+  border-right: solid 1px #d9e0e4;
+  padding-right: 4px;
+}
+
+.dg-resizer {
+  cursor: col-resize;
+}
+
+.dg-cell {
+  padding: 2px 12px;
+  border-bottom: solid 1px #d9e0e4;  
+}
+
+.dg-right {
+  text-align: right;
+}
+
+.dg-row {
+  background: #fff;
+}
+
+.dg-row:nth-child(even) {
+  background: #f7f5f3;
+}
+
+.dg-row:hover {
+  background: #e0f4ff !important;
+}
+
+.dg-sort-count {
+  font-weight: normal;  
+}
+
+.dg-sort-icon {
+  fill: currentColor;
+  height: .83em;
+  width: .83em;
+  margin-left: 0.5ch;
+}
+
+.dg-selectable .dg-row {
+  cursor: pointer;
+}
+
+.dg-selectable .dg-row:active {
+  background: #cbeafa !important;
+}
+
+.dg-selected.dg-row {
+  background: #daf1ff;
+}
+
+@keyframes dg-loader {
+  50% { background-size: 80%; }
+  100% { background-position: 125% 0; }
+}
+
+.dg-loader
+{
+  position: absolute; 
+  background: linear-gradient(to right, #64bff0, #64bff0) repeat-y; 
+  height: 2px;
+  width: 100%;
+  left: 0;
+  background-position: -25% 0; 
+  background-size: 20%; 
+  animation: dg-loader 1.5s ease-in-out infinite;
+}
