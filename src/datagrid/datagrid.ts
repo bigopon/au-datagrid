@@ -1,6 +1,7 @@
 import { bindable, customElement } from "aurelia";
 import { GridState } from "./gridstate";
 import { IColumnDefinition, IGridState } from "./interfaces";
+import './interfaces';
 
 export class DataGrid {
 
@@ -13,7 +14,10 @@ export class DataGrid {
   columns: IColumnDefinition[];
 
   @bindable()
-  selected: any[] | Set<any>;
+  selected: any[];
+
+  @bindable()
+  search: string;
 
   beforeBind() {
     window['grid'] = this;
@@ -24,6 +28,17 @@ export class DataGrid {
 
   dataChanged(data: any[]): void {
     this.state.data = data;
+  }
+
+  searchChanged(search: string) {
+    this.state.search = search;
+  }
+
+  clicked(row: HTMLTableRowElement & { item: any } | null) {
+    if (!row) {
+      return;
+    }
+    this.state.select(row.item);
   }
 
   // todo: maybe have a way to do validation with @customElement decorator?

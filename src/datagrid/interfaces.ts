@@ -1,4 +1,4 @@
-import { ICustomElementViewModel } from '@aurelia/runtime';
+import { CustomElement, CustomAttribute } from '@aurelia/runtime';
 import { IVirtualState } from './virtual';
 
 export interface IColumnDefinition {
@@ -11,6 +11,7 @@ export interface IColumnDefinition {
   css?: string;
   resizable?: boolean;
   sortable?: boolean;
+  searchable?: boolean;
   width?: number;
 };
 
@@ -38,6 +39,11 @@ export interface IGridState {
   size: ISize;
   columns: IColumn[];
   sort: ISortColumn[];
+  search: string;
 
   useVirtual(virtual: IVirtualState): void;
+  select(item: any): void;
 }
+
+window['CustomElement'] = CustomElement;
+window['CustomAttribute'] = CustomAttribute;

@@ -6,19 +6,19 @@ import {
   LifecycleFlags,
   Controller,
   INode,
-  MountStrategy
+  MountStrategy,
+  ISyntheticView
 } from '@aurelia/runtime';
 
-@customElement({
-  name: 'cell',
-  template: '<template></template>'
-})
+@customElement({ name: 'cell' })
 export class Cell {
 
   @bindable()
   html: string;
 
-  private view: Controller;
+  private view: ISyntheticView;
+
+  private isAttached: boolean;
 
   constructor(
     @IController readonly parentCtrler: IHydratedController,
@@ -26,16 +26,21 @@ export class Cell {
     @INode readonly element: Element,
   ) {}
 
-  beforeBind() {
-    this.htmlChanged(this.html, LifecycleFlags.fromBind);
+  beforeBind(flags: LifecycleFlags) {
+    this.htmlChanged(this.html, flags);
   }
 
-  beforeDetach() {
-    this.view.detach(LifecycleFlags.none);
+  beforeAttach(flags: LifecycleFlags) {
+    this.isAttached = true;
+    this.view.attach(flags);
   }
 
-  beforeUnbind() {
-    this.view.unbind(LifecycleFlags.none);
+  beforeDetach(flags: LifecycleFlags) {
+    this.view.detach(flags);
+  }
+
+  beforeUnbind(flags: LifecycleFlags) {
+    this.view.unbind(flags);
   }
 
   htmlChanged(html: string, flags = LifecycleFlags.none) {
@@ -51,9 +56,11 @@ export class Cell {
       view.detach(flags);
       view.unbind(flags);
     }
-    view = this.view = viewFactory.create(flags) as unknown as Controller;
-    (view as Controller).hold(this.element, MountStrategy.append);
+    view = this.view = viewFactory.create(flags);
+    view.hold(this.element, MountStrategy.append);
     view.bind(flags, this.parentCtrler.scope);
-    view.attach(flags);
+    if (this.isAttached) {
+      view.attach(flags);
+    }
   }
 }

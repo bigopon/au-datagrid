@@ -4,7 +4,9 @@
     "experimentalDecorators": true,
     "lib": [
       "esnext",
-      "dom"
+      "dom",
+      "DOM.Iterable",
+      "ES2016.Array.Include"
     ],
     "module": "esnext",
     "moduleResolution": "node",

@@ -1,6 +1,5 @@
-import { inject } from '@aurelia/kernel';
-import { bindable, customAttribute, customElement, BindingMode, INode } from '@aurelia/runtime';
-import { IColumn, ISize } from './interfaces';
+import { bindable, BindingMode, customAttribute, customElement, INode } from '@aurelia/runtime';
+import { IColumn, IGridState, ISize } from './interfaces';
 
 @customAttribute('size')
 export class SizeAttr {
@@ -26,6 +25,30 @@ export class SizeAttr {
 
   beforeUnbind() {
     this.observer.disconnect();
+  }
+}
+
+@customAttribute('autosize')
+export class AutoSize {
+
+  @bindable()
+  state: IGridState;
+
+  constructor(@INode readonly el: HTMLTableRowElement) {}
+
+  afterAttach() {
+    const el = this.el;
+    const columns = this.state.columns;
+    const headerCells = el.cells;
+    for (let i = 0, ii = headerCells.length; ii > i; ++i) {
+      const column = columns[i];
+      if (column.name !== 'filler') {
+        columns[i].width = headerCells[i].clientWidth;
+      }
+    }
+
+    // Once autosizing is done, put the grid in fixed-layout mode
+    el.closest('table').style.width = "100%";
   }
 }
 
@@ -58,5 +81,6 @@ export class ColResizer {
       },
       { once: true }
     );
+    return true;
   }
 }

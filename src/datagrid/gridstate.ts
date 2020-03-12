@@ -7,13 +7,31 @@ export class GridState implements IGridState {
   size: ISize;
   sort: ISortColumn[];
   columns: IColumn[];
-  selected: Set<any> | any[];
+  selected: any[];
+  search: string;
 
   private _items: any[];
   private _virtual: IVirtualState;
 
   get items(): any[] {
-    const data = this.data;
+    let data = this.data;
+    const search = this.search;
+    if (search) {
+      const columns = this.columns;
+      if (columns.length > 0) {
+        const re = RegExp(escapeRegExp(search), 'i');
+        const searchables = columns.filter(c => c.searchable !== false).map(c => c.data!);
+        data = data.filter(obj => {
+          for (const s of searchables) {
+            const val = obj[s];
+            if (val != null && re.test(val + ""))
+              return true;
+          }
+          return false;
+        });
+      }
+    }
+
     const sort = this.sort;
     if (sort.length === 0) {
       return data;
@@ -38,12 +56,12 @@ export class GridState implements IGridState {
     }
     const columns = this.columns;
     const total = columns.reduce((sum, col) => col.name === 'filler' || isNaN(col.width) ? sum : sum + col.width, 0);
-    return size.width - total;
+    return Math.max(0, size.width - total);
   }
 
   constructor(
     columns: IColumnDefinition[],
-    selected: Set<any> | any[]
+    selected: any[]
   ) {
     this.columns = [
       ...columns.map(c => ({
@@ -107,4 +125,22 @@ export class GridState implements IGridState {
       sort.push({ column, asc });
     }
   }
+  
+  select(item: any) {
+    const selected = this.selected;
+    // todo: maybe support single select here
+    if (!selected) {
+      return;
+    }
+    const idx = selected.indexOf(item);
+    if (idx === -1) {
+      selected.push(item);
+    } else {
+      selected.splice(idx, 1);
+    }
+  }
+}
+
+function escapeRegExp(re: string) {
+  return re.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
