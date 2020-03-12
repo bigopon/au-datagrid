@@ -9,11 +9,12 @@
   <div
     class='dg-scroller'
     :size=state.size
-    :scrolltop='state.virtual.scrollTop & debounce:5'>
+    :scrolltop='state.virtual.scrollTop'>
     <table
       ref='table'
       class='dg'
       :class='selected && "dg-selectable"'>
+      <!-- a potential bug when this datagrid is inside a table -->
       <tbody @click="clicked($event.target.closest('tr'))">
         <tr
           :class='state.virtual.index % 2 === 1 && "dg-row"'
@@ -39,7 +40,8 @@
               class='dg-header'
               :class='[c.css, c.sortable !== false && "dg-sort"]'
               :style='{ width: c.width + "px" }'
-              @click='state.sortOn(c, $event.ctrlKey)'>
+              @click='state.sortOn(c, $event.ctrlKey)'
+              @pointerdown="headerPointerDown($event, c)">
               <cell :html='c.header' ></cell>
               <sort-indicator :if="c.sortable !== false" :state='state' :column='c' ></sort-indicator>
               <col-resizer :column='c'></col-resizer>
