@@ -1,5 +1,4 @@
 import { CustomElement, CustomAttribute } from '@aurelia/runtime';
-import { IVirtualState } from './virtual';
 
 export interface IColumnDefinition {
   name?: string;
@@ -40,9 +39,26 @@ export interface IGridState {
   columns: IColumn[];
   sort: ISortColumn[];
   search: string;
+  virtual: IVirtualState;
 
-  useVirtual(virtual: IVirtualState): void;
+  useVirtual(): void;
   select(item: any): void;
+}
+
+export type IConfigurableVirtualState = Omit<IVirtualState, 'topGap' | 'bottomGap' | 'setState' | 'index' | 'count'>;
+
+export interface IVirtualState<T = any> {
+
+  scrollTop: number;
+  rowHeight: number;
+  buffer: number;
+  topGap: number;
+  bottomGap: number;
+  index: number;
+  count: number;
+
+  setState(newState: Partial<IConfigurableVirtualState>): void;
+  calc(data: any[]): any[];
 }
 
 window['CustomElement'] = CustomElement;

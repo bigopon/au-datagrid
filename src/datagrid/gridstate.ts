@@ -1,5 +1,13 @@
-import { IGridState, ISize, IColumn, IColumnDefinition, ISortColumn } from "./interfaces";
-import { IVirtualState } from "./virtual";
+import { IGridState, ISize, IColumn, IColumnDefinition, ISortColumn, IVirtualState } from "./interfaces";
+import { VirtualState } from "./virtual";
+
+let getterCallCount = 0;
+let __id = 0;
+const get = () => {
+  getterCallCount++;
+  clearTimeout(__id);
+  __id = window.setTimeout(() => console.log(getterCallCount), 1000);
+}
 
 export class GridState implements IGridState {
 
@@ -9,12 +17,13 @@ export class GridState implements IGridState {
   columns: IColumn[];
   selected: any[];
   search: string;
-
-  private _items: any[];
-  private _virtual: IVirtualState;
+  virtual: IVirtualState;
 
   get items(): any[] {
     let data = this.data;
+    if (!data || data.length === 0) {
+      return data;
+    }
     const search = this.search;
     if (search) {
       const columns = this.columns;
@@ -33,20 +42,25 @@ export class GridState implements IGridState {
     }
 
     const sort = this.sort;
-    if (sort.length === 0) {
-      return data;
+    if (sort.length > 0) {
+      const comparer = (a: object, b: object) =>  {
+        for (let s of sort) {
+          let d = s.column.data!;
+          let da = a[d], db = b[d];
+          if (da > db) return s.asc;
+          if (da < db) return -s.asc;
+        }
+        return 0;
+      };
+      data = [...data].sort(comparer);
     }
 
-    const comparer = (a: object, b: object) =>  {
-      for (let s of sort) {
-        let d = s.column.data!;
-        let da = a[d], db = b[d];
-        if (da > db) return s.asc;
-        if (da < db) return -s.asc;
-      }
-      return 0;
-    };
-    return [...data].sort(comparer);
+    if (this.virtual) {
+      // this return is awkward, todo: fix
+      data = this.virtual.calc(data);
+    }
+    get();
+    return data;
   }
 
   get fillerSize(): number {
@@ -96,10 +110,10 @@ export class GridState implements IGridState {
     this.sort = [];
   }
 
-  useVirtual(virtualState: IVirtualState) {
-    this._virtual = virtualState;
-    virtualState.data = this.data;
-    virtualState.size = this.size;
+  useVirtual() {
+    if (!this.virtual) {
+      this.virtual = new VirtualState(this);
+    }
   }
 
   sortOn(column: IColumnDefinition, multi?: boolean): void {

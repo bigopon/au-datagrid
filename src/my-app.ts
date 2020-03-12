@@ -18,8 +18,8 @@ export class MyApp {
 
   async fetch() {
     this.state.data = await new Promise(resolve => setTimeout(resolve, 15))
-      .then(() => import(/* webpackChunkName: "pokedex" */ './pokedex2'))
-      .then(({ default: data }) => data.slice(0, 10));
+      .then(() => import(/* webpackChunkName: "pokedex" */ './pokedex'))
+      .then(({ default: data }) => data.slice(0));
   }
 
   beforeBind() {

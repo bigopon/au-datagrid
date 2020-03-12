@@ -6,48 +6,56 @@
 <template class="dg-wrapper">
   <!-- view only variables declared by <let/> -->
   <let :header-size="null"></let>
-  <table
-    ref='table'
-    class='dg'
-    :class='selected && "dg-selectable"'
-    :size=state.size>
-    <tbody @click="clicked($event.target.closest('tr'))">
-      <tr repeat.for='item of state.items'
-          class='dg-row'
-          :class="selected.includes(item) && 'dg-selected'"
-          :item=item>
-        <td repeat.for='c of state.columns'
-            as-element='cell'
-            class='dg-cell'
-            :class='c.css'
-            :html='c.render'>
-        </td>
-      </tr>
-    </tbody>
-    <!-- HACK: thead at the end is ugly, but required to have sticky headers on top of tr that 
-                have their own stacking context, e.g. when using opacity or transform. -->
-    <thead>
-      <tr :size="headerSize" :autosize=state>
-        <th repeat.for='c of state.columns'
-            class='dg-header'
-            :class='[c.css, c.sortable !== false && "dg-sort"]'
-            :style='{ width: c.width + "px" }'
-            @click='state.sortOn(c, $event.ctrlKey)'>
-            <cell :html='c.header' ></cell>
-            <sort-indicator :if="c.sortable !== false" :state='state' :column='c' ></sort-indicator>
-            <col-resizer :column='c'></col-resizer>
-        </th>
-      </tr>
-      <tr>
-        <th
-          :colspan='columns.length'
-          class='dg-header dg-header-back'
-          :style='{ height: headerSize.height + "px", width: headerSize.width + "px" }'></th>
-      </tr>
-      <tr
-        :if='loading'
-        class='dg-loader'
-        :style="{ top: headerSize.height + 'px', width: headerSize.width + 'px' }"></tr>
-    </thead>
-  </table>
+  <div
+    class='dg-scroller'
+    :size=state.size
+    :scrolltop='state.virtual.scrollTop & debounce:5'>
+    <table
+      ref='table'
+      class='dg'
+      :class='selected && "dg-selectable"'>
+      <tbody @click="clicked($event.target.closest('tr'))">
+        <tr
+          :class='state.virtual.index % 2 === 1 && "dg-row"'
+          :style='{ height: state.virtual.topGap + "px" }'></tr>
+        <tr repeat.for='item of state.items'
+            class='dg-row'
+            :class="selected.includes(item) && 'dg-selected'"
+            :item=item>
+          <td repeat.for='c of state.columns'
+              as-element='cell'
+              class='dg-cell'
+              :class='c.css'
+              :html='c.render'>
+          </td>
+        </tr>
+        <tr :style='{ height: state.virtual.bottomGap + "px" }'></tr>
+      </tbody>
+      <!-- HACK: thead at the end is ugly, but required to have sticky headers on top of tr that 
+                  have their own stacking context, e.g. when using opacity or transform. -->
+      <thead>
+        <tr :size="headerSize" :autosize=state>
+          <th repeat.for='c of state.columns'
+              class='dg-header'
+              :class='[c.css, c.sortable !== false && "dg-sort"]'
+              :style='{ width: c.width + "px" }'
+              @click='state.sortOn(c, $event.ctrlKey)'>
+              <cell :html='c.header' ></cell>
+              <sort-indicator :if="c.sortable !== false" :state='state' :column='c' ></sort-indicator>
+              <col-resizer :column='c'></col-resizer>
+          </th>
+        </tr>
+        <tr>
+          <th
+            class='dg-header dg-header-back'
+            :colspan='columns.length'
+            :style='{ height: headerSize.height + "px", width: headerSize.width + "px" }'></th>
+        </tr>
+        <tr
+          :if='loading'
+          class='dg-loader'
+          :style="{ top: headerSize.height + 'px', width: headerSize.width + 'px' }"></tr>
+      </thead>
+    </table>
+  </div>
 </template>

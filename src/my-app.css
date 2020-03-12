@@ -1,3 +1,10 @@
-.message {
-  background-color: lightblue;
+body, my-app {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px;
 }

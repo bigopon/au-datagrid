@@ -1,19 +1,22 @@
 <import from="./datagrid/datagrid"></import>
-
-<h2 style='margin: 0'>Pokedex</h2>
-<div style='margin: 12px 0'>
-  <button @click='state.fetch(1500)'>Load data (1.5s)</button>
-  Selected count: ${ state.selected.length }
-  <button @click='state.selected.splice(0)'>Clear selection</button>
-  <input type='search' :value='state.search & debounce:400' placeholder='Search...' />
-</div>
-<div style="display: flex">
+<template containerless>
+  <h2 style='margin: 0'>Pokedex</h2>
+  <div style='margin: 12px 0'>
+    <button @click='state.fetch(1500)'>Load data (1.5s)</button>
+    Selected count: ${ state.selected.length }
+    <button @click='state.selected.splice(0)'>Clear selection</button>
+    <input type='search' :value='state.search & debounce:400' placeholder='Search...' />
+  </div>
   <datagrid
     :columns=state.columns
     :data=state.data
     :selected=state.selected
     :search=state.search
+    view-model.ref="grid"
+    virtual
     style="flex: 1"></datagrid>
-</div>
-<div>Selection Count
-  ${state.selected.length}</div>
+  <div>Selection Count
+    ${state.selected.length}</div>
+
+  <div style="position: fixed; bottom: 20px; right: 0">${grid.state.items.length}</div>
+</template>

@@ -6,6 +6,9 @@ import {
 } from '@aurelia/jit';
 
 Aurelia
-  .register(ColonPrefixedBindAttributePattern, AtPrefixedTriggerAttributePattern)
+  .register(
+    ColonPrefixedBindAttributePattern,
+    AtPrefixedTriggerAttributePattern
+  )
   .app(MyApp)
   .start();

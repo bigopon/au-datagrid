@@ -56,7 +56,7 @@ export class AutoSize {
   name: 'col-resizer',
   template:
   `<template
-    :class="col.resizable === false ? 'dg-separator' : 'dg-resizer'"
+    :class="column.resizable === false ? 'dg-separator' : 'dg-resizer'"
     @click="$event.stopImmediatePropagation()"
     @pointerdown="onPointerDown($event)">`
 })
@@ -67,6 +67,9 @@ export class ColResizer {
   onPointerDown(event: PointerEvent & { target: HTMLElement }) {
     const { target, x, pointerId } = event;
     const column = this.column;
+    if (column.resizable === false) {
+      return;
+    }
     const baseWidth = column.width;
     const moveHandler = (event: PointerEvent) =>
       column.width = Math.max(baseWidth + event.x - x, 40);

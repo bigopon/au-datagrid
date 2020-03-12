@@ -19,10 +19,16 @@ export class DataGrid {
   @bindable()
   search: string;
 
+  @bindable({ set: v => v || v === '' ? true : false })
+  virtual: boolean = false;
+
   beforeBind() {
     window['grid'] = this;
     this.ensureProps();
     this.state = new GridState(this.columns, this.selected);
+    if (this.virtual) {
+      this.state.useVirtual();
+    }
     this.dataChanged(this.data);
   }
 
