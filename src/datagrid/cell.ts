@@ -7,8 +7,11 @@ import {
   Controller,
   INode,
   MountStrategy,
-  ISyntheticView
+  ISyntheticView,
+  IViewFactory
 } from '@aurelia/runtime';
+
+const factoryMap = new WeakMap<IContainer, Map<string, IViewFactory>>();
 
 @customElement({ name: 'cell' })
 export class Cell {
@@ -44,23 +47,37 @@ export class Cell {
   }
 
   htmlChanged(html: string, flags = LifecycleFlags.none) {
-    const viewFactory = getRenderContext(
-        { name: 'cell', template: html },
-        this.container,
-        void 0
-      )
-      .getViewFactory();
-
     let view = this.view;
     if (view) {
       view.detach(flags);
       view.unbind(flags);
     }
+    const viewFactory = this.getFactory(this.parentCtrler['context'], html);
     view = this.view = viewFactory.create(flags);
     view.hold(this.element, MountStrategy.append);
     view.bind(flags, this.parentCtrler.scope);
     if (this.isAttached) {
       view.attach(flags);
     }
+  }
+
+  getFactory(container: IContainer, html: string) {
+    let map = factoryMap.get(container);
+    if (!map) {
+      factoryMap.set(container, map = new Map());
+    }
+    let factory = map.get(html);
+    if (!factory) {
+      map.set(
+        html,
+        factory = getRenderContext(
+          { name: 'cell', template: html },
+          container,
+          void 0
+          )
+          .getViewFactory()
+      );
+    }
+    return factory;
   }
 }

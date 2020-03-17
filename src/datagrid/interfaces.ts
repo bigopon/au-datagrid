@@ -18,6 +18,12 @@ export interface IColumn extends IColumnDefinition {
   defaultWidth?: string;
   header?: string;
   render?: string;
+  width: number;
+  offsetX?: number;
+  animationX?: Animation;
+  deltaX?: number;
+  animate?(el: HTMLElement): void;
+  dragged?: boolean;
 }
 
 export interface ISize {
@@ -42,6 +48,7 @@ export interface IGridState {
   virtual: IVirtualState;
 
   useVirtual(): void;
+  sortOn(c: IColumnDefinition, multi?: boolean): void;
   select(item: any): void;
 }
 

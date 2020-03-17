@@ -4,12 +4,17 @@ import { IColumnDefinition, IGridState } from "./interfaces";
 @customElement({
   name: 'sort-indicator',
   template:
-    `<template :style='{ visibility: isVisible ? null : "hidden" }'>
+    `<template :style='{ visibility: isVisible ? null : null }'>
       <svg class="dg-sort-icon">
         <use href="/assets/icons.svg#arrow-\${asc > 0 ? 'up' : 'down'}" />
       </svg>
       <span class="dg-sort-count" :style="{ visibility: state.sort.length <= 1 ? 'hidden' : null }">
     `
+    
+    // `<template :style='{ visibility: isVisible ? null : null }'>
+    //   <img class="dg-sort-icon" src="/assets/svg-\${asc > 0 ? 'up' : 'down'}.svg" >
+    //   <span class="dg-sort-count" :style="{ visibility: state.sort.length <= 1 ? 'hidden' : null }">
+    // `
 })
 export class SortIndicator {
 

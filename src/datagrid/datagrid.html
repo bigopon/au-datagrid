@@ -2,13 +2,14 @@
 <import from='./sort-indicator'></import>
 <import from='./sizing'></import>
 <import from='./cell'></import>
+<import from='./anime'></import>
 
 <template class="dg-wrapper">
   <!-- view only variables declared by <let/> -->
   <let :header-size="null"></let>
   <div
     class='dg-scroller'
-    :size=state.size
+    :size=size
     :scrolltop='state.virtual.scrollTop'>
     <table
       ref='table'
@@ -27,7 +28,8 @@
               as-element='cell'
               class='dg-cell'
               :class='c.css'
-              :html='c.render'>
+              :html='c.render'
+              :anim-column=c.animate>
           </td>
         </tr>
         <tr :style='{ height: state.virtual.bottomGap + "px" }'></tr>
@@ -40,8 +42,9 @@
               class='dg-header'
               :class='[c.css, c.sortable !== false && "dg-sort"]'
               :style='{ width: c.width + "px" }'
-              @click='state.sortOn(c, $event.ctrlKey)'
-              @pointerdown="headerPointerDown($event, c)">
+              @click='headerClicked($event, c)'
+              @pointerdown="headerPointerDown($event, c)"
+              :anim-column='c.dragged ? null : c.animate'>
               <cell :html='c.header' ></cell>
               <sort-indicator :if="c.sortable !== false" :state='state' :column='c' ></sort-indicator>
               <col-resizer :column='c'></col-resizer>

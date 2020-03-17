@@ -65,6 +65,7 @@ export class ColResizer {
   column: IColumn;
 
   onPointerDown(event: PointerEvent & { target: HTMLElement }) {
+    event.stopPropagation();
     const { target, x, pointerId } = event;
     const column = this.column;
     if (column.resizable === false) {

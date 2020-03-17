@@ -1,4 +1,5 @@
 import Aurelia from 'aurelia';
+import { register } from '@aurelia/plugin-svg';
 import { MyApp } from './my-app';
 import {
   ColonPrefixedBindAttributePattern,
@@ -8,7 +9,8 @@ import {
 Aurelia
   .register(
     ColonPrefixedBindAttributePattern,
-    AtPrefixedTriggerAttributePattern
+    AtPrefixedTriggerAttributePattern,
+    {register}
   )
   .app(MyApp)
   .start();

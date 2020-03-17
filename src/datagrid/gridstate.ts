@@ -19,6 +19,8 @@ export class GridState implements IGridState {
   search: string;
   virtual: IVirtualState;
 
+  _items: any[];
+
   get items(): any[] {
     let data = this.data;
     if (!data || data.length === 0) {
@@ -81,7 +83,9 @@ export class GridState implements IGridState {
       ...columns.map(c => ({
         header: '${c.label}',
         render: '${item[c.data]}',
-        ...c
+        width: 0,
+        ...c,
+        defaultWidth: c.width,
       })),
       {
         name: 'filler',
@@ -97,7 +101,7 @@ export class GridState implements IGridState {
           return this.state.fillerSize;
         }
       }
-    ];
+    ] as IColumn[];
     this.selected = selected;
     if (selected) {
       this.columns.unshift({
@@ -105,7 +109,7 @@ export class GridState implements IGridState {
         render: '<input type="checkbox" checked.bind="state.selected" :model="item" />',
         sortable: false,
         resizable: false
-      });
+      } as IColumn);
     }
     this.sort = [];
   }
